@@ -5,6 +5,7 @@
 ```
 Main (GameManager)            scenes/main/main.tscn — toujours actif, même en pause
 ├── Game (instanciée à chaque partie)   scenes/game/game.tscn — mis en pause avec l'arbre
+│   ├── DifficultyManager     réglages de difficulté selon le temps de survie
 │   ├── Background            décor des voies
 │   ├── ObstacleSpawner       crée, déplace et libère les obstacles
 │   │   └── Obstacle ×N       scenes/obstacles/obstacle.tscn
@@ -33,6 +34,7 @@ dépendances circulaires et les chemins de nœuds fragiles.
 | `gameplay/lanes.gd` | Géométrie des 3 voies (partagée). |
 | `gameplay/player_controller.gd` | Entrées tactiles et clavier, changement de voie animé, détection de collision. |
 | `gameplay/obstacle_spawner.gd` | Génère les rangées (toujours franchissables), les fait descendre, libère celles qui sortent. |
+| `gameplay/difficulty_manager.gd` | Calcule vitesse, écart des rangées et proportion de rangées doubles selon le temps de survie, avec limites de sécurité. `Game` applique ces valeurs au générateur à chaque image physique. |
 | `gameplay/obstacle.gd` | Mouvement d'un bloc et signal de franchissement unique. |
 | `gameplay/score_manager.gd` | Score courant et record ; refuse les points hors partie. |
 | `gameplay/game.gd` | Assemble une partie ; garantit un seul signal `crashed`. |
@@ -44,8 +46,8 @@ dépendances circulaires et les chemins de nœuds fragiles.
 - **Résolution de référence 720×1280, étirement `canvas_items`, aspect `keep_width`** : la largeur logique vaut toujours
   720 px (les 3 voies ont donc toujours la même taille), et la hauteur s'adapte aux écrans plus ou moins allongés.
 - **Rangées créées selon la distance parcourue**, pas selon le temps : tous les obstacles descendent ensemble, donc
-  l'écart entre deux rangées est exactement `row_spacing` pixels, même si la vitesse change. Cela garantit un temps
-  de réaction minimal (calculé par le futur DifficultyManager).
+  l'écart entre deux rangées est exactement `row_spacing` pixels, même si la vitesse change. Le DifficultyManager
+  calcule cet écart à partir d'un temps entre rangées, jamais inférieur au minimum de sécurité.
 - **Une nouvelle instance de partie à chaque « Retry »** : impossible d'hériter d'obstacles ou d'états de la partie précédente.
 - **Zones de collision plus petites que le dessin** (orbe : rayon 26 contre 34 affiché ; obstacle : 152×42 contre 168×56),
   pour que les frôlements ne soient pas punis.
