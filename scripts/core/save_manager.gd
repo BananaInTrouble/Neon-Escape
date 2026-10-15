@@ -14,6 +14,7 @@ const SECTION_SCORES := "scores"
 const KEY_BEST := "best"
 const SECTION_SETTINGS := "settings"
 const KEY_SOUND := "sound_enabled"
+const KEY_MUSIC := "music_enabled"
 ## Version du format, pour pouvoir le faire évoluer plus tard sans perdre de données.
 const FORMAT_VERSION := 1
 ## Au-delà, la valeur est considérée comme corrompue.
@@ -45,14 +46,31 @@ func save_best(best: int) -> bool:
 
 ## Lit sur le disque si le son est activé (oui par défaut, et si la valeur est invalide).
 func load_sound_enabled() -> bool:
-	_read_file()
-	var value: Variant = _config.get_value(SECTION_SETTINGS, KEY_SOUND, true)
-	return value if typeof(value) == TYPE_BOOL else true
+	return _load_flag(KEY_SOUND)
 
 
 func save_sound_enabled(enabled: bool) -> bool:
+	return _save_flag(KEY_SOUND, enabled)
+
+
+## Lit sur le disque si la musique est activée (oui par défaut, et si la valeur est invalide).
+func load_music_enabled() -> bool:
+	return _load_flag(KEY_MUSIC)
+
+
+func save_music_enabled(enabled: bool) -> bool:
+	return _save_flag(KEY_MUSIC, enabled)
+
+
+func _load_flag(key: String) -> bool:
+	_read_file()
+	var value: Variant = _config.get_value(SECTION_SETTINGS, key, true)
+	return value if typeof(value) == TYPE_BOOL else true
+
+
+func _save_flag(key: String, enabled: bool) -> bool:
 	_ensure_loaded()
-	_config.set_value(SECTION_SETTINGS, KEY_SOUND, enabled)
+	_config.set_value(SECTION_SETTINGS, key, enabled)
 	return _write()
 
 

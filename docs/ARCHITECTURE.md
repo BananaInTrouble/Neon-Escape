@@ -36,6 +36,8 @@ dépendances circulaires et les chemins de nœuds fragiles.
 | `core/game_state.gd` | États `MENU`, `PLAYING`, `PAUSED`, `GAME_OVER` et table des transitions autorisées. Une transition refusée ne change rien : c'est la protection principale contre les doubles fins de partie. |
 | `core/save_manager.gd` | Lit et écrit le record et le réglage du son dans `user://save.cfg` (ConfigFile) ; toutes les données sont réécrites ensemble pour ne jamais en perdre une. Valeurs absentes ou invalides → 0 ; écriture via un fichier temporaire puis renommage, pour qu'une coupure ne corrompe pas la sauvegarde. |
 | `core/audio_manager.gd` | Joue les effets sonores avec 4 lecteurs réutilisés (pas de création de nœud à chaque son). Coupable via le réglage du son. |
+| `core/music_player.gd` | Musique de fond : tirage du morceau, boucle, pause, fondus. Ignore les fichiers absents. |
+| `core/music_tracks.gd` | Liste des 10 morceaux avec titre, auteur, licence, page : source unique pour le lecteur et les crédits. |
 | `core/game_manager.gd` | Lance une partie (nouvelle instance de `game.tscn`), la met en pause, la termine, revient au menu. Affiche le bon écran. Relie les signaux. |
 | `gameplay/lanes.gd` | Géométrie des 3 voies (partagée). |
 | `gameplay/player_controller.gd` | Entrées tactiles et clavier, changement de voie animé, détection de collision. |
@@ -47,6 +49,7 @@ dépendances circulaires et les chemins de nœuds fragiles.
 | `gameplay/score_manager.gd` | Score courant et record ; refuse les points hors partie. |
 | `gameplay/game.gd` | Assemble une partie ; garantit un seul signal `crashed`. |
 | `ui/main_menu.gd`, `ui/hud.gd`, `ui/pause_menu.gd`, `ui/game_over.gd` | Affichage uniquement ; émettent des signaux. |
+| `ui/credits_screen.gd` | Écran des crédits (obligatoire pour les morceaux CC-BY). |
 | `ui/safe_area_container.gd` | Marges qui évitent l'encoche et la barre d'accueil des téléphones. |
 
 ## Décisions techniques

@@ -9,6 +9,8 @@ Moteur : **Godot 4** (projet créé et testé avec Godot **4.3-stable**, s'ouvre
 - Le record est sauvegardé sur l'appareil et conservé après fermeture du jeu.
 - Style néon : boutons lumineux, décor qui défile, traînée et pulsation de l'orbe, explosion à la collision.
 - Sons (déplacement, point, collision, record, clics), avec un bouton SOUND : ON/OFF mémorisé.
+- Musique pendant les parties (10 morceaux libres de droits, un différent à chaque partie), bouton MUSIC : ON/OFF,
+  écran CREDITS. Les fichiers de musique restent à télécharger : voir « Ajouter les musiques » ci-dessous.
 - Trois voies, joueur au centre au départ.
 - Toucher la moitié gauche ou droite de l'écran pour changer de voie (sur ordinateur : clic, flèches ← → ou A / D).
 - Des rangées d'obstacles descendent ; chaque rangée laisse toujours au moins une voie libre.
@@ -60,6 +62,15 @@ GODOT=/Applications/Godot.app/Contents/MacOS/Godot ./tools/check.sh
 
 Ce script importe le projet, exécute tous les tests automatisés, puis lance le jeu sans fenêtre pendant 300 images.
 Il affiche `== Tout est OK` ou la liste des erreurs. Détails et vérifications manuelles : [tests/README.md](tests/README.md).
+
+## Ajouter les musiques
+
+Les 10 morceaux et leurs licences sont listés dans [CREDITS.md](CREDITS.md) et `scripts/core/music_tracks.gd`.
+
+1. Télécharger chaque morceau depuis sa page OpenGameArt et le renommer avec son identifiant
+   (ex. `cyber_power.mp3`, `synesthesia.mp3` ; identifiants dans `music_tracks.gd`).
+2. Les convertir (volume harmonisé, format OGG léger) : `./tools/import_music.sh <dossier_des_téléchargements>`
+3. Relancer `./tools/check.sh`. Un morceau absent est simplement ignoré par le jeu.
 
 ## Organisation
 

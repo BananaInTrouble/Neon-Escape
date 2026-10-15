@@ -69,8 +69,9 @@ def main():
     os.makedirs(OUT_DIR, exist_ok=True)
     # Changement de voie : petit « swoosh » montant, très court.
     save("move", tone(520, 880, 0.07, decay=35, harmonics=(1.0, 0.3, 0.1)), peak_db=-9)
-    # Point marqué : deux notes cristallines (mi, si).
-    save("score", concat(tone(1318, 1318, 0.07, 30), tone(1976, 1976, 0.12, 22)), peak_db=-8)
+    # Point marqué (joué à chaque rangée franchie, donc très souvent) : deux notes
+    # douces une octave plus bas qu'avant, sons purs, nettement moins fort (-20 dB).
+    save("score", concat(tone(659, 659, 0.05, 40, (1.0,)), tone(988, 988, 0.08, 32, (1.0,))), peak_db=-20)
     # Collision : souffle filtré + grondement descendant.
     noise = lowpass(rng.uniform(-1, 1, int(RATE * 0.5)), 0.18) * envelope(int(RATE * 0.5), decay=7)
     rumble = tone(260, 45, 0.5, decay=5, harmonics=(1.0, 0.5, 0.25))

@@ -47,16 +47,22 @@ Tous les réglages sont dans `scripts/gameplay/difficulty_manager.gd`, et modifi
 | Orbe | Halo qui pulse, traînée de particules vers le bas, étirement bref en changeant de voie (dessin uniquement, la collision ne change pas) |
 | Collision | Explosion de particules, flash blanc, tremblement de l'écran ; l'écran de fin apparaît 0,5 s après |
 | Interface | Boutons arrondis lumineux (thème `assets/theme/neon_theme.tres`) : cyan = action principale, rose = secondaire ; score qui « saute » à chaque point ; titre qui respire ; NEW RECORD qui clignote |
-| Sons | Déplacement, point, collision, record, clic. Synthétisés par `tools/generate_sfx.py` : aucune ressource externe, aucune licence |
+| Sons | Déplacement, point (volontairement très discret : -20 dB, il revient à chaque rangée), collision, record, clic. Synthétisés par `tools/generate_sfx.py` : aucune ressource externe, aucune licence |
 
 Tout est dessiné par Godot (formes, dégradés, particules) : aucune image externe. Les effets restent légers
 (quelques dizaines de particules, pas de shader) pour les téléphones modestes.
 
+## Musique
+
+- Un morceau tiré au hasard à chaque partie (jamais deux fois de suite), qui boucle tant que la partie dure.
+- Fondu d'entrée au départ, pause avec le jeu, fondu de sortie à la collision ; pas de musique dans les menus.
+- Volume de la musique à -8 dB, sous les effets sonores ; volumes des morceaux harmonisés à la conversion.
+- Style recherché : électro / synthwave / chiptune entraînant, univers néon (proche de Geometry Dash).
+- Uniquement des licences CC0 ou CC-BY 4.0 : le dépôt est public, les fichiers doivent pouvoir y être redistribués.
+
 ## Réglages
 
-Un seul réglage existe : le son (bouton SOUND : ON/OFF du menu principal), mémorisé avec le record. Un écran
-« Settings » complet n'a pas encore d'intérêt ; il pourra être ajouté si d'autres réglages apparaissent (vibrations,
-musique…).
+Deux réglages indépendants dans le menu principal : SOUND (effets sonores) et MUSIC, mémorisés avec le record.
 
 ## Règles de sécurité (garanties par le code et vérifiées par les tests)
 

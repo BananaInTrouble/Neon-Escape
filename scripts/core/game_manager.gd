@@ -15,6 +15,7 @@ const S := GameState.State
 @onready var hud: Hud = $HUD
 @onready var pause_menu: PauseMenu = $PauseMenu
 @onready var game_over_screen: GameOverScreen = $GameOver
+@onready var credits_screen: CreditsScreen = $Credits
 
 ## Fichier du record. Les tests en utilisent un autre pour ne jamais toucher au vrai record.
 @export var save_path := SaveManager.DEFAULT_PATH
@@ -23,6 +24,7 @@ var state := GameState.new()
 var score := ScoreManager.new()
 var save: SaveManager
 var audio := AudioManager.new()
+var music := MusicPlayer.new()
 var game: Game
 ## Le jingle « record » est joué juste après le son de collision.
 var _record_jingle_timer := Timer.new()
@@ -39,6 +41,9 @@ func _ready() -> void:
 	add_child(audio)
 	audio.set_enabled(save.load_sound_enabled())
 	main_menu.set_sound_enabled(audio.enabled)
+	add_child(music)
+	music.set_enabled(save.load_music_enabled())
+	main_menu.set_music_enabled(music.enabled)
 	_record_jingle_timer.one_shot = true
 	_record_jingle_timer.wait_time = 0.45
 	_record_jingle_timer.timeout.connect(audio.play.bind(&"record"))
@@ -52,6 +57,9 @@ func _ready() -> void:
 	score.score_changed.connect(_on_score_changed)
 	main_menu.play_requested.connect(start_game)
 	main_menu.sound_toggled.connect(_on_sound_toggled)
+	main_menu.music_toggled.connect(_on_music_toggled)
+	main_menu.credits_requested.connect(credits_screen.show)
+	credits_screen.closed.connect(credits_screen.hide)
 	hud.pause_requested.connect(pause_game)
 	pause_menu.resume_requested.connect(resume_game)
 	pause_menu.restart_requested.connect(start_game)
@@ -103,6 +111,7 @@ func start_game() -> bool:
 	game.player.lane_changed.connect(_on_player_moved)  # le joueur existe une fois la partie ajoutée
 	move_child(game, 0)  # sous l'interface dans l'arbre
 	_show_screens([hud])
+	music.play_next()
 	return true
 
 
@@ -112,6 +121,7 @@ func pause_game() -> bool:
 	if not state.transition_to(S.PAUSED):
 		return false
 	get_tree().paused = true
+	music.set_paused(true)
 	_show_screens([hud, pause_menu])
 	return true
 
@@ -120,6 +130,7 @@ func resume_game() -> bool:
 	if state.current != S.PAUSED or not state.transition_to(S.PLAYING):
 		return false
 	get_tree().paused = false
+	music.set_paused(false)
 	_show_screens([hud])
 	return true
 
@@ -131,6 +142,7 @@ func end_game() -> bool:
 	game.stop()
 	var is_new_record := score.commit()
 	audio.play(&"crash")
+	music.fade_out_and_stop()
 	if is_new_record:
 		save.save_best(score.best)  # une seule écriture, et seulement si nécessaire
 		_record_jingle_timer.start()
@@ -152,6 +164,7 @@ func go_to_menu() -> bool:
 		return false
 	_game_over_timer.stop()
 	get_tree().paused = false
+	music.stop()
 	_clear_game()
 	_show_menu()
 	return true
@@ -163,6 +176,7 @@ func _show_menu() -> void:
 
 
 func _show_screens(screens: Array[CanvasLayer]) -> void:
+	credits_screen.hide()
 	for screen: CanvasLayer in [main_menu, hud, pause_menu, game_over_screen]:
 		screen.visible = screen in screens
 
@@ -179,6 +193,11 @@ func _on_player_moved(_lane: int) -> void:
 func _on_sound_toggled(enabled: bool) -> void:
 	audio.set_enabled(enabled)
 	save.save_sound_enabled(enabled)
+
+
+func _on_music_toggled(enabled: bool) -> void:
+	music.set_enabled(enabled)
+	save.save_music_enabled(enabled)
 
 
 func _on_row_passed() -> void:
