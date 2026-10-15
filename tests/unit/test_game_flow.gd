@@ -1,0 +1,83 @@
+extends TestCase
+## Tests d'intégration sur la vraie scène principale.
+
+const MAIN_SCENE := preload("res://scenes/main/main.tscn")
+
+var main: GameManager
+
+
+func before_each() -> void:
+	main = MAIN_SCENE.instantiate()
+	tree.root.add_child(main)
+
+
+func after_each() -> void:
+	main.queue_free()
+
+
+func _block_center_on_player() -> void:
+	var p: Array[bool] = [false, true, false]
+	main.game.spawner.spawn_row(p, main.game.player.position.y)
+
+
+func test_game_starts_and_obstacles_move() -> void:
+	assert_eq(main.state.current, GameState.State.PLAYING)
+	await wait_physics_frames(10)
+	var spawner := main.game.spawner
+	assert_true(spawner.active_count() > 0, "Une rangée est apparue")
+	var obstacle: Obstacle = spawner._active[0]
+	var y0 := obstacle.position.y
+	await wait_physics_frames(10)
+	assert_true(obstacle.position.y > y0, "Les obstacles descendent")
+
+
+func test_collision_ends_game_once() -> void:
+	var game_overs := [0]
+	main.state.changed.connect(func(_f, to):
+		if to == GameState.State.GAME_OVER:
+			game_overs[0] += 1)
+	_block_center_on_player()
+	await wait_physics_frames(5)
+	assert_eq(main.state.current, GameState.State.GAME_OVER)
+	# Collisions supplémentaires simulées : ignorées.
+	main.game.player.hit.emit()
+	main.end_game()
+	await wait_physics_frames(5)
+	assert_eq(game_overs[0], 1, "Une seule fin de partie")
+	assert_true(main.game_over_screen.visible, "Écran Game Over affiché")
+	assert_false(main.game.spawner.running, "Obstacles arrêtés")
+
+
+func test_score_counts_passed_rows() -> void:
+	var p: Array[bool] = [true, false, false]
+	main.game.spawner.spawn_row(p, main.game.player.position.y - 10.0)
+	await wait_physics_frames(30)
+	assert_eq(main.score.score, 1)
+	assert_eq(main.hud.score_label.text, "1")
+
+
+func test_retry_starts_clean_game() -> void:
+	var p: Array[bool] = [true, false, false]
+	main.game.spawner.spawn_row(p, main.game.player.position.y - 10.0)
+	await wait_physics_frames(30)
+	var old_game := main.game
+	_block_center_on_player()
+	await wait_physics_frames(5)
+	assert_eq(main.state.current, GameState.State.GAME_OVER)
+	main.game_over_screen.retry_requested.emit()
+	await wait_frames(2)
+	assert_eq(main.state.current, GameState.State.PLAYING)
+	assert_true(main.game != old_game, "Nouvelle instance de partie")
+	assert_false(is_instance_valid(old_game), "Ancienne partie libérée")
+	assert_eq(main.score.score, 0, "Score remis à zéro")
+	assert_eq(main.score.best, 1, "Record conservé")
+	assert_eq(main.game.player.lane, Lanes.CENTER)
+	assert_false(main.game_over_screen.visible)
+
+
+func test_retry_button_enabled_after_short_delay() -> void:
+	_block_center_on_player()
+	await wait_physics_frames(5)
+	assert_true(main.game_over_screen.retry_button.disabled, "Bouton bloqué juste après la collision")
+	await tree.create_timer(GameOverScreen.INPUT_DELAY + 0.1).timeout
+	assert_false(main.game_over_screen.retry_button.disabled, "Bouton actif ensuite")
