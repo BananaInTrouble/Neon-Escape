@@ -1,13 +1,17 @@
 class_name GameManager
 extends Node
-## Chef d'orchestre : crée/détruit la partie et pilote les transitions d'état.
+## Chef d'orchestre : crée/détruit la partie, gère la pause et les écrans.
 ##
 ## Il ne contient aucune règle de gameplay détaillée : il relie les modules
-## (partie, score, interface) via leurs signaux.
+## (partie, score, interface) via leurs signaux. Toute demande passe par
+## GameState, qui refuse les transitions incohérentes (ex. pause depuis le menu).
 
 const GAME_SCENE: PackedScene = preload("res://scenes/game/game.tscn")
+const S := GameState.State
 
+@onready var main_menu: MainMenu = $MainMenu
 @onready var hud: Hud = $HUD
+@onready var pause_menu: PauseMenu = $PauseMenu
 @onready var game_over_screen: GameOverScreen = $GameOver
 
 var state := GameState.new()
@@ -16,19 +20,49 @@ var game: Game
 
 
 func _ready() -> void:
-	# Le gestionnaire doit continuer à tourner quand le gameplay est en pause.
+	# Le gestionnaire et l'interface continuent de fonctionner en pause ;
+	# seule la partie (Game) est suspendue.
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	state.changed.connect(_on_state_changed)
 	score.score_changed.connect(hud.show_score)
+	main_menu.play_requested.connect(start_game)
+	hud.pause_requested.connect(pause_game)
+	pause_menu.resume_requested.connect(resume_game)
+	pause_menu.restart_requested.connect(start_game)
+	pause_menu.main_menu_requested.connect(go_to_menu)
 	game_over_screen.retry_requested.connect(start_game)
-	# Provisoire (avant le menu principal) : on lance directement une partie.
-	start_game()
+	game_over_screen.main_menu_requested.connect(go_to_menu)
+	_show_menu()
 
 
-## Lance une nouvelle partie propre (détruit la précédente si besoin).
+func _exit_tree() -> void:
+	# Ne jamais laisser l'arbre en pause derrière nous.
+	get_tree().paused = false
+
+
+## Pause automatique si l'application passe en arrière-plan (appel, notification,
+## changement d'onglet dans le navigateur...).
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_APPLICATION_FOCUS_OUT or what == NOTIFICATION_APPLICATION_PAUSED:
+		if is_node_ready():
+			pause_game()
+
+
+## Clavier : Échap ou P pour mettre en pause / reprendre.
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("pause_game"):
+		if state.current == S.PLAYING:
+			pause_game()
+		elif state.current == S.PAUSED:
+			resume_game()
+		get_viewport().set_input_as_handled()
+
+
+## Lance une nouvelle partie propre (depuis le menu, la pause ou la fin de partie).
 func start_game() -> bool:
-	if not state.transition_to(GameState.State.PLAYING):
+	if not state.transition_to(S.PLAYING):
 		return false
+	get_tree().paused = false
 	_clear_game()
 	score.reset()
 	game = GAME_SCENE.instantiate()
@@ -37,20 +71,56 @@ func start_game() -> bool:
 	game.crashed.connect(end_game)
 	add_child(game)
 	move_child(game, 0)  # sous l'interface dans l'arbre
-	game_over_screen.hide()
-	hud.show()
+	_show_screens([hud])
+	return true
+
+
+## Suspend réellement le gameplay : obstacles, chronomètre de difficulté et
+## animations de la partie sont figés tant que l'arbre est en pause.
+func pause_game() -> bool:
+	if not state.transition_to(S.PAUSED):
+		return false
+	get_tree().paused = true
+	_show_screens([hud, pause_menu])
+	return true
+
+
+func resume_game() -> bool:
+	if state.current != S.PAUSED or not state.transition_to(S.PLAYING):
+		return false
+	get_tree().paused = false
+	_show_screens([hud])
 	return true
 
 
 ## Termine la partie. Les appels répétés sont ignorés.
 func end_game() -> bool:
-	if not state.transition_to(GameState.State.GAME_OVER):
+	if not state.transition_to(S.GAME_OVER):
 		return false
 	game.stop()
 	var is_new_record := score.commit()
-	hud.hide()
+	_show_screens([game_over_screen])
 	game_over_screen.show_result(score.score, score.best, is_new_record)
 	return true
+
+
+func go_to_menu() -> bool:
+	if not state.transition_to(S.MENU):
+		return false
+	get_tree().paused = false
+	_clear_game()
+	_show_menu()
+	return true
+
+
+func _show_menu() -> void:
+	main_menu.show_best(score.best)
+	_show_screens([main_menu])
+
+
+func _show_screens(screens: Array[CanvasLayer]) -> void:
+	for screen: CanvasLayer in [main_menu, hud, pause_menu, game_over_screen]:
+		screen.visible = screen in screens
 
 
 func _on_row_passed() -> void:
