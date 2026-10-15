@@ -6,7 +6,7 @@ Mini-framework sans dépendance : `tests/test_case.gd` (assertions) et `tests/ru
 Chaque fichier `tests/unit/test_*.gd` contient des fonctions `test_...`.
 
 ```bash
-# Depuis le dossier NeonEscape (remplacer godot par le chemin de ton exécutable)
+# Depuis le dossier du projet (remplacer godot par le chemin de ton exécutable)
 godot --headless --import                         # une fois, ou après ajout de scripts
 godot --headless --script res://tests/run_tests.gd
 # ou tout en une fois :

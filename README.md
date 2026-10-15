@@ -18,8 +18,8 @@ Moteur : **Godot 4** (projet créé et testé avec Godot **4.3-stable**, s'ouvre
    - ou en téléchargeant la version « Standard » sur https://godotengine.org/download/macos/ puis en glissant `Godot.app` dans Applications.
 2. Récupérer le projet :
    ```bash
-   git clone -b claude/neon-escape-mvp https://github.com/bananaintrouble/tcgmarket.git
-   cd tcgmarket/NeonEscape
+   git clone https://github.com/BananaInTrouble/neon-escape.git
+   cd neon-escape
    ```
 3. Jouer directement (sans ouvrir l'éditeur) :
    ```bash
