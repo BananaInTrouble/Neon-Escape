@@ -14,8 +14,12 @@ const S := GameState.State
 @onready var pause_menu: PauseMenu = $PauseMenu
 @onready var game_over_screen: GameOverScreen = $GameOver
 
+## Fichier du record. Les tests en utilisent un autre pour ne jamais toucher au vrai record.
+@export var save_path := SaveManager.DEFAULT_PATH
+
 var state := GameState.new()
 var score := ScoreManager.new()
+var save: SaveManager
 var game: Game
 
 
@@ -23,6 +27,8 @@ func _ready() -> void:
 	# Le gestionnaire et l'interface continuent de fonctionner en pause ;
 	# seule la partie (Game) est suspendue.
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	save = SaveManager.new(save_path)
+	score.best = save.load_best()
 	state.changed.connect(_on_state_changed)
 	score.score_changed.connect(hud.show_score)
 	main_menu.play_requested.connect(start_game)
@@ -99,6 +105,8 @@ func end_game() -> bool:
 		return false
 	game.stop()
 	var is_new_record := score.commit()
+	if is_new_record:
+		save.save_best(score.best)  # une seule écriture, et seulement si nécessaire
 	_show_screens([game_over_screen])
 	game_over_screen.show_result(score.score, score.best, is_new_record)
 	return true

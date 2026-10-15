@@ -29,6 +29,14 @@ Tous les réglages sont dans `scripts/gameplay/difficulty_manager.gd`, et modifi
   esquive bien ou mal. Le chronomètre s'arrête en pause et à la fin de partie, et repart de 0 à chaque partie.
 - Elle monte de façon linéaire pendant 75 s, puis reste au maximum : pas de difficulté incontrôlable.
 
+## Sauvegarde du record
+
+- Seul le meilleur score est sauvegardé, dans `user://save.cfg` (dossier de données de l'application).
+- Écriture uniquement en fin de partie, et seulement si un nouveau record vient d'être établi.
+- Fichier absent, illisible ou valeur invalide : le jeu démarre normalement avec un record de 0.
+- Version web : le record est conservé par le navigateur. Safari peut effacer les données d'un site non visité
+  pendant 7 jours ; un jeu ajouté à l'écran d'accueil n'est en principe pas concerné.
+
 ## Règles de sécurité (garanties par le code et vérifiées par les tests)
 
 - Une rangée bloque 1 ou 2 voies, **jamais 3**.
@@ -47,6 +55,5 @@ Tous les réglages sont dans `scripts/gameplay/difficulty_manager.gd`, et modifi
 
 ## Prochaines étapes
 
-7. Sauvegarde du record (`user://`), robustesse aux fichiers corrompus.
 8. Direction artistique : particules, animations, sons.
 9. Vérification complète et préparation des exports Android / iOS.

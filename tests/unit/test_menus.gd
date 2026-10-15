@@ -1,20 +1,19 @@
 extends TestCase
 ## Étape 6 : menu principal, pause, retour au menu, zones de sécurité.
 
-const MAIN_SCENE := preload("res://scenes/main/main.tscn")
 const S := GameState.State
 
 var main: GameManager
 
 
 func before_each() -> void:
-	main = MAIN_SCENE.instantiate()
-	tree.root.add_child(main)
+	main = create_main()
 
 
 func after_each() -> void:
 	tree.paused = false
 	main.queue_free()
+	delete_test_save()
 
 
 func _crash() -> void:
