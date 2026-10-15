@@ -10,8 +10,10 @@ Main (GameManager)            scenes/main/main.tscn — toujours actif, même en
 │   ├── ObstacleSpawner       crée, déplace et libère les obstacles
 │   │   └── Obstacle ×N       scenes/obstacles/obstacle.tscn
 │   └── Player                scenes/player/player.tscn
-├── HUD (CanvasLayer)         score courant
-└── GameOver (CanvasLayer)    résultat + Retry
+├── MainMenu (CanvasLayer)    titre, record, Play
+├── HUD (CanvasLayer)         score courant, bouton Pause (dans un SafeAreaContainer)
+├── PauseMenu (CanvasLayer)   Resume, Restart, Main Menu
+└── GameOver (CanvasLayer)    résultat, Retry, Main Menu
 ```
 
 Les modules communiquent par **signaux**, toujours vers le haut :
@@ -19,7 +21,9 @@ Les modules communiquent par **signaux**, toujours vers le haut :
 ```
 Obstacle.passed ──> ObstacleSpawner.row_passed ──> Game.row_passed ──> GameManager ──> ScoreManager ──> HUD
 Player.hit ──> Game.crashed (une seule fois) ──> GameManager.end_game() ──> GameOverScreen
-GameOverScreen.retry_requested ──> GameManager.start_game()
+MainMenu.play_requested / PauseMenu.restart_requested / GameOverScreen.retry_requested ──> GameManager.start_game()
+Hud.pause_requested ──> GameManager.pause_game()      PauseMenu.resume_requested ──> GameManager.resume_game()
+PauseMenu.main_menu_requested / GameOverScreen.main_menu_requested ──> GameManager.go_to_menu()
 ```
 
 Aucun nœud enfant ne connaît son parent. Seul le GameManager connaît tout le monde, ce qui évite les
@@ -30,7 +34,7 @@ dépendances circulaires et les chemins de nœuds fragiles.
 | Fichier | Rôle |
 |---|---|
 | `core/game_state.gd` | États `MENU`, `PLAYING`, `PAUSED`, `GAME_OVER` et table des transitions autorisées. Une transition refusée ne change rien : c'est la protection principale contre les doubles fins de partie. |
-| `core/game_manager.gd` | Lance une partie (nouvelle instance de `game.tscn`) et la termine. Relie les signaux. |
+| `core/game_manager.gd` | Lance une partie (nouvelle instance de `game.tscn`), la met en pause, la termine, revient au menu. Affiche le bon écran. Relie les signaux. |
 | `gameplay/lanes.gd` | Géométrie des 3 voies (partagée). |
 | `gameplay/player_controller.gd` | Entrées tactiles et clavier, changement de voie animé, détection de collision. |
 | `gameplay/obstacle_spawner.gd` | Génère les rangées (toujours franchissables), les fait descendre, libère celles qui sortent. |
@@ -38,7 +42,8 @@ dépendances circulaires et les chemins de nœuds fragiles.
 | `gameplay/obstacle.gd` | Mouvement d'un bloc et signal de franchissement unique. |
 | `gameplay/score_manager.gd` | Score courant et record ; refuse les points hors partie. |
 | `gameplay/game.gd` | Assemble une partie ; garantit un seul signal `crashed`. |
-| `ui/hud.gd`, `ui/game_over.gd` | Affichage uniquement ; émettent des signaux. |
+| `ui/main_menu.gd`, `ui/hud.gd`, `ui/pause_menu.gd`, `ui/game_over.gd` | Affichage uniquement ; émettent des signaux. |
+| `ui/safe_area_container.gd` | Marges qui évitent l'encoche et la barre d'accueil des téléphones. |
 
 ## Décisions techniques
 
@@ -59,6 +64,9 @@ dépendances circulaires et les chemins de nœuds fragiles.
 - **Entrées** : `_unhandled_input` ne reçoit que les touchers non consommés par l'interface. Un bouton (Pause, Retry) ne
   peut donc pas déplacer le joueur. Les conteneurs d'interface plein écran sont en `mouse_filter = Ignore` pour ne pas
   bloquer les touchers de jeu.
+- **Pause** : `get_tree().paused = true`. La partie (`Game`) est en mode `PAUSABLE` : obstacles, chronomètre de
+  difficulté, animations et contrôles du joueur s'arrêtent. Le GameManager et les écrans héritent de son mode
+  `ALWAYS` : les menus restent utilisables. Toute sortie de pause (reprise, redémarrage, menu) remet `paused` à faux.
 - **Libération des obstacles** avec `queue_free()` quand ils sortent de l'écran. Au rythme actuel (≈1 rangée/s), un
   système de recyclage (pool) n'est pas nécessaire ; on pourra l'ajouter si le profilage mobile le justifie.
 

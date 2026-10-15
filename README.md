@@ -3,14 +3,17 @@
 Jeu d'arcade 2D minimaliste en portrait : un noyau lumineux esquive des obstacles sur trois voies.
 Moteur : **Godot 4** (projet créé et testé avec Godot **4.3-stable**, s'ouvre aussi dans les versions 4.x plus récentes).
 
-## État actuel : prototype jouable (étapes 1 à 5)
+## État actuel : prototype jouable (étapes 1 à 6)
 
+- Menu principal (PLAY, record de la session), partie, pause, écran de fin.
 - Trois voies, joueur au centre au départ.
 - Toucher la moitié gauche ou droite de l'écran pour changer de voie (sur ordinateur : clic, flèches ← → ou A / D).
 - Des rangées d'obstacles descendent ; chaque rangée laisse toujours au moins une voie libre.
 - La vitesse et le rythme des obstacles augmentent progressivement pendant 75 s, puis plafonnent.
-- +1 point par rangée franchie. Une collision termine la partie, et **RETRY** relance une partie propre.
-- Pas encore : menu principal, pause, sauvegarde du record, sons (voir [docs/GAME_DESIGN.md](docs/GAME_DESIGN.md)).
+- +1 point par rangée franchie. Une collision termine la partie : **RETRY** relance une partie propre, **MAIN MENU** revient à l'accueil.
+- Bouton **II** en haut à droite (ou Échap / P sur ordinateur) : pause réelle avec RESUME, RESTART, MAIN MENU.
+  Le jeu se met aussi en pause tout seul si l'application passe en arrière-plan.
+- Pas encore : sauvegarde du record (il est perdu à la fermeture), sons (voir [docs/GAME_DESIGN.md](docs/GAME_DESIGN.md)).
 
 ## Jouer sur iPhone ou Android (version web)
 

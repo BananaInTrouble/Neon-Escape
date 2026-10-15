@@ -41,10 +41,12 @@ Tous les réglages sont dans `scripts/gameplay/difficulty_manager.gd`, et modifi
 - Un point par **rangée** (même si elle contient 2 blocs), compté quand le haut de la rangée dépasse le bas du joueur.
 - Les déplacements se déclenchent à l'**appui** (plus réactif que le relâchement).
 - Textes des boutons en anglais (Play, Retry…) comme dans le cahier des charges.
+- Pas de bouton Settings pour l'instant : aucun réglage n'existe encore (le son arrivera à l'étape 8).
+- Pause automatique quand l'application passe en arrière-plan, pour ne jamais perdre une partie à cause d'un appel.
+- Le bouton Pause est semi-transparent pour ne pas cacher les obstacles qui apparaissent dans la voie de droite.
 
 ## Prochaines étapes
 
-6. Menu principal, bouton et menu Pause, écran Game Over complet (Main Menu), zones de sécurité (encoche).
 7. Sauvegarde du record (`user://`), robustesse aux fichiers corrompus.
 8. Direction artistique : particules, animations, sons.
 9. Vérification complète et préparation des exports Android / iOS.

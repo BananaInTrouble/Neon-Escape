@@ -9,9 +9,11 @@ var main: GameManager
 func before_each() -> void:
 	main = MAIN_SCENE.instantiate()
 	tree.root.add_child(main)
+	main.start_game()
 
 
 func after_each() -> void:
+	tree.paused = false
 	main.queue_free()
 
 
