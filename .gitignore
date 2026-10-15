@@ -1,0 +1,9 @@
+# Cache local de Godot (régénéré automatiquement à l'ouverture)
+.godot/
+# Exports
+build/
+*.apk
+*.aab
+*.ipa
+# Configuration d'export contenant des chemins/identifiants locaux
+export_credentials.cfg
