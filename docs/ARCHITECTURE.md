@@ -43,8 +43,12 @@ dépendances circulaires et les chemins de nœuds fragiles.
 ## Décisions techniques
 
 - **Rendu « Compatibility » (OpenGL)** : le plus compatible et le plus léger sur les téléphones modestes.
-- **Résolution de référence 720×1280, étirement `canvas_items`, aspect `keep_width`** : la largeur logique vaut toujours
-  720 px (les 3 voies ont donc toujours la même taille), et la hauteur s'adapte aux écrans plus ou moins allongés.
+- **Résolution de référence 720×1280, étirement `canvas_items`, aspect `expand`** : aucune bande noire. Sur un écran
+  plus allongé (téléphones récents), la largeur reste 720 px et la hauteur augmente ; sur un écran plus large (Safari
+  avec sa barre d'outils, tablettes), la largeur augmente et les voies s'élargissent un peu. Tout le placement est
+  calculé à partir de la taille réelle de la zone de jeu.
+- **Export web « sans threads »** (`export_presets.cfg`, preset « Web ») : le plus compatible avec Safari sur iPhone et
+  avec les hébergements simples (aucun en-tête serveur spécial requis).
 - **Rangées créées selon la distance parcourue**, pas selon le temps : tous les obstacles descendent ensemble, donc
   l'écart entre deux rangées est exactement `row_spacing` pixels, même si la vitesse change. Le DifficultyManager
   calcule cet écart à partir d'un temps entre rangées, jamais inférieur au minimum de sécurité.
