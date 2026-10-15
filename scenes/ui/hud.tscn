@@ -37,7 +37,7 @@ horizontal_alignment = 1
 
 [node name="PauseButton" type="Button" parent="SafeArea/Top"]
 unique_name_in_owner = true
-modulate = Color(1, 1, 1, 0.7)
+modulate = Color(1, 1, 1, 0.75)
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
@@ -46,5 +46,6 @@ offset_left = -104.0
 offset_bottom = 104.0
 grow_horizontal = 0
 focus_mode = 0
-theme_override_font_sizes/font_size = 44
+theme_type_variation = &"RoundButton"
+theme_override_font_sizes/font_size = 40
 text = "II"

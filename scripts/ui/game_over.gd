@@ -7,7 +7,7 @@ signal main_menu_requested
 
 ## Délai avant que les boutons répondent, pour qu'un toucher frénétique
 ## juste après la collision ne relance pas la partie par erreur.
-const INPUT_DELAY := 0.4
+const INPUT_DELAY := 0.3
 
 @onready var score_label: Label = %ScoreLabel
 @onready var best_label: Label = %BestLabel
@@ -16,6 +16,7 @@ const INPUT_DELAY := 0.4
 @onready var main_menu_button: Button = %MainMenuButton
 
 var _input_delay_timer := Timer.new()
+var _record_tween: Tween
 
 
 func _ready() -> void:
@@ -32,6 +33,12 @@ func show_result(score: int, best: int, is_new_record: bool) -> void:
 	score_label.text = "Score : %d" % score
 	best_label.text = "Record : %d" % best
 	record_label.visible = is_new_record
+	if _record_tween:
+		_record_tween.kill()
+	if is_new_record:
+		_record_tween = create_tween().set_loops()
+		_record_tween.tween_property(record_label, "modulate:a", 0.35, 0.35)
+		_record_tween.tween_property(record_label, "modulate:a", 1.0, 0.35)
 	_set_buttons_disabled(true)
 	show()
 	_input_delay_timer.start()

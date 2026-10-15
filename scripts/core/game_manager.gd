@@ -7,6 +7,8 @@ extends Node
 ## GameState, qui refuse les transitions incohérentes (ex. pause depuis le menu).
 
 const GAME_SCENE: PackedScene = preload("res://scenes/game/game.tscn")
+## Délai entre la collision et l'écran de fin : le temps de voir l'explosion.
+const GAME_OVER_REVEAL_DELAY := 0.5
 const S := GameState.State
 
 @onready var main_menu: MainMenu = $MainMenu
@@ -20,7 +22,12 @@ const S := GameState.State
 var state := GameState.new()
 var score := ScoreManager.new()
 var save: SaveManager
+var audio := AudioManager.new()
 var game: Game
+## Le jingle « record » est joué juste après le son de collision.
+var _record_jingle_timer := Timer.new()
+var _game_over_timer := Timer.new()
+var _last_result_is_record := false
 
 
 func _ready() -> void:
@@ -29,15 +36,31 @@ func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	save = SaveManager.new(save_path)
 	score.best = save.load_best()
+	add_child(audio)
+	audio.set_enabled(save.load_sound_enabled())
+	main_menu.set_sound_enabled(audio.enabled)
+	_record_jingle_timer.one_shot = true
+	_record_jingle_timer.wait_time = 0.45
+	_record_jingle_timer.timeout.connect(audio.play.bind(&"record"))
+	add_child(_record_jingle_timer)
+	_game_over_timer.one_shot = true
+	_game_over_timer.wait_time = GAME_OVER_REVEAL_DELAY
+	_game_over_timer.timeout.connect(_reveal_game_over)
+	add_child(_game_over_timer)
 	state.changed.connect(_on_state_changed)
 	score.score_changed.connect(hud.show_score)
+	score.score_changed.connect(_on_score_changed)
 	main_menu.play_requested.connect(start_game)
+	main_menu.sound_toggled.connect(_on_sound_toggled)
 	hud.pause_requested.connect(pause_game)
 	pause_menu.resume_requested.connect(resume_game)
 	pause_menu.restart_requested.connect(start_game)
 	pause_menu.main_menu_requested.connect(go_to_menu)
 	game_over_screen.retry_requested.connect(start_game)
 	game_over_screen.main_menu_requested.connect(go_to_menu)
+	# Clic sonore sur tous les boutons de l'interface.
+	for button: Button in find_children("*", "Button", true, false):
+		button.pressed.connect(audio.play.bind(&"click"))
 	_show_menu()
 
 
@@ -68,6 +91,7 @@ func _unhandled_input(event: InputEvent) -> void:
 func start_game() -> bool:
 	if not state.transition_to(S.PLAYING):
 		return false
+	_game_over_timer.stop()
 	get_tree().paused = false
 	_clear_game()
 	score.reset()
@@ -76,6 +100,7 @@ func start_game() -> bool:
 	game.row_passed.connect(_on_row_passed)
 	game.crashed.connect(end_game)
 	add_child(game)
+	game.player.lane_changed.connect(_on_player_moved)  # le joueur existe une fois la partie ajoutée
 	move_child(game, 0)  # sous l'interface dans l'arbre
 	_show_screens([hud])
 	return true
@@ -105,16 +130,27 @@ func end_game() -> bool:
 		return false
 	game.stop()
 	var is_new_record := score.commit()
+	audio.play(&"crash")
 	if is_new_record:
 		save.save_best(score.best)  # une seule écriture, et seulement si nécessaire
-	_show_screens([game_over_screen])
-	game_over_screen.show_result(score.score, score.best, is_new_record)
+		_record_jingle_timer.start()
+	_last_result_is_record = is_new_record
+	_show_screens([hud])
+	_game_over_timer.start()
 	return true
+
+
+func _reveal_game_over() -> void:
+	if state.current != S.GAME_OVER:
+		return
+	_show_screens([game_over_screen])
+	game_over_screen.show_result(score.score, score.best, _last_result_is_record)
 
 
 func go_to_menu() -> bool:
 	if not state.transition_to(S.MENU):
 		return false
+	_game_over_timer.stop()
 	get_tree().paused = false
 	_clear_game()
 	_show_menu()
@@ -129,6 +165,20 @@ func _show_menu() -> void:
 func _show_screens(screens: Array[CanvasLayer]) -> void:
 	for screen: CanvasLayer in [main_menu, hud, pause_menu, game_over_screen]:
 		screen.visible = screen in screens
+
+
+func _on_score_changed(value: int) -> void:
+	if value > 0:
+		audio.play(&"score")
+
+
+func _on_player_moved(_lane: int) -> void:
+	audio.play(&"move")
+
+
+func _on_sound_toggled(enabled: bool) -> void:
+	audio.set_enabled(enabled)
+	save.save_sound_enabled(enabled)
 
 
 func _on_row_passed() -> void:

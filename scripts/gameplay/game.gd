@@ -20,6 +20,7 @@ const PLAYER_BOTTOM_OFFSET := 230.0
 
 var area_size := Vector2(720, 1280)
 var _crashed := false
+var _flash := ColorRect.new()
 
 
 func _ready() -> void:
@@ -33,17 +34,24 @@ func _ready() -> void:
 	difficulty.start()
 	difficulty.apply_to(spawner)
 	spawner.start()
+	_flash.size = area_size
+	_flash.color = Color(1, 1, 1, 0)
+	_flash.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_flash.z_index = 10
+	add_child(_flash)
 
 
 # Game est traité avant ses enfants : les réglages sont à jour avant que les obstacles bougent.
 func _physics_process(_delta: float) -> void:
 	difficulty.apply_to(spawner)
+	background.scroll_speed = spawner.speed if spawner.running else 0.0
 
 
 ## Fige la partie (obstacles arrêtés, contrôles et collisions désactivés).
 func stop() -> void:
 	difficulty.stop()
 	spawner.stop()
+	background.scroll_speed = 0.0
 	player.controls_enabled = false
 	player.set_deferred("monitoring", false)
 
@@ -52,4 +60,20 @@ func _on_player_hit() -> void:
 	if _crashed:
 		return
 	_crashed = true
+	_play_crash_effects()
 	crashed.emit()
+
+
+func _play_crash_effects() -> void:
+	Effects.spawn_burst(self, player.position)
+	player.explode()
+	# Flash blanc bref.
+	var flash := create_tween()
+	flash.tween_property(_flash, "color:a", 0.45, 0.04)
+	flash.tween_property(_flash, "color:a", 0.0, 0.3)
+	# Tremblement de l'écran qui s'atténue.
+	var shake := create_tween()
+	for i in 7:
+		var strength := 16.0 * (1.0 - i / 7.0)
+		shake.tween_property(self, "position", Vector2(randf_range(-1, 1), randf_range(-1, 1)) * strength, 0.035)
+	shake.tween_property(self, "position", Vector2.ZERO, 0.04)

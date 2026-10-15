@@ -45,7 +45,10 @@ func test_collision_ends_game_once() -> void:
 	main.end_game()
 	await wait_physics_frames(5)
 	assert_eq(game_overs[0], 1, "Une seule fin de partie")
+	assert_false(main.game_over_screen.visible, "Écran caché le temps de voir l'explosion")
+	await tree.create_timer(GameManager.GAME_OVER_REVEAL_DELAY + 0.1).timeout
 	assert_true(main.game_over_screen.visible, "Écran Game Over affiché")
+	assert_eq(game_overs[0], 1, "Toujours une seule fin de partie")
 	assert_false(main.game.spawner.running, "Obstacles arrêtés")
 
 
@@ -79,7 +82,9 @@ func test_retry_starts_clean_game() -> void:
 func test_retry_button_enabled_after_short_delay() -> void:
 	_block_center_on_player()
 	await wait_physics_frames(5)
-	assert_true(main.game_over_screen.retry_button.disabled, "Bouton bloqué juste après la collision")
+	await tree.create_timer(GameManager.GAME_OVER_REVEAL_DELAY + 0.05).timeout
+	assert_true(main.game_over_screen.visible)
+	assert_true(main.game_over_screen.retry_button.disabled, "Bouton bloqué juste après l'apparition")
 	await tree.create_timer(GameOverScreen.INPUT_DELAY + 0.1).timeout
 	assert_false(main.game_over_screen.retry_button.disabled, "Bouton actif ensuite")
 

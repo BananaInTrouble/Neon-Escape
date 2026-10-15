@@ -45,6 +45,7 @@ text = "RESUME"
 
 [node name="RestartButton" type="Button" parent="Center/VBox"]
 unique_name_in_owner = true
+theme_type_variation = &"SecondaryButton"
 custom_minimum_size = Vector2(420, 120)
 layout_mode = 2
 size_flags_horizontal = 4
@@ -53,6 +54,7 @@ text = "RESTART"
 
 [node name="MainMenuButton" type="Button" parent="Center/VBox"]
 unique_name_in_owner = true
+theme_type_variation = &"SecondaryButton"
 custom_minimum_size = Vector2(420, 120)
 layout_mode = 2
 size_flags_horizontal = 4

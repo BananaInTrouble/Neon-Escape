@@ -3,10 +3,12 @@
 Jeu d'arcade 2D minimaliste en portrait : un noyau lumineux esquive des obstacles sur trois voies.
 Moteur : **Godot 4** (projet créé et testé avec Godot **4.3-stable**, s'ouvre aussi dans les versions 4.x plus récentes).
 
-## État actuel : prototype jouable (étapes 1 à 7)
+## État actuel : jeu complet jouable (étapes 1 à 8)
 
 - Menu principal (PLAY, record), partie, pause, écran de fin.
 - Le record est sauvegardé sur l'appareil et conservé après fermeture du jeu.
+- Style néon : boutons lumineux, décor qui défile, traînée et pulsation de l'orbe, explosion à la collision.
+- Sons (déplacement, point, collision, record, clics), avec un bouton SOUND : ON/OFF mémorisé.
 - Trois voies, joueur au centre au départ.
 - Toucher la moitié gauche ou droite de l'écran pour changer de voie (sur ordinateur : clic, flèches ← → ou A / D).
 - Des rangées d'obstacles descendent ; chaque rangée laisse toujours au moins une voie libre.
@@ -14,7 +16,7 @@ Moteur : **Godot 4** (projet créé et testé avec Godot **4.3-stable**, s'ouvre
 - +1 point par rangée franchie. Une collision termine la partie : **RETRY** relance une partie propre, **MAIN MENU** revient à l'accueil.
 - Bouton **II** en haut à droite (ou Échap / P sur ordinateur) : pause réelle avec RESUME, RESTART, MAIN MENU.
   Le jeu se met aussi en pause tout seul si l'application passe en arrière-plan.
-- Pas encore : effets visuels et sons (voir [docs/GAME_DESIGN.md](docs/GAME_DESIGN.md)).
+- Reste à faire : préparation des applications Android et iOS (voir [docs/GAME_DESIGN.md](docs/GAME_DESIGN.md)).
 
 ## Jouer sur iPhone ou Android (version web)
 
@@ -68,7 +70,8 @@ Il affiche `== Tout est OK` ou la liste des erreurs. Détails et vérifications 
 | `scripts/gameplay/` | Joueur, obstacles, générateur, score, voies |
 | `scripts/ui/` | Affichage (HUD, Game Over) : aucune règle de jeu |
 | `tests/` | Tests automatisés (`tests/unit/test_*.gd`) et lanceur |
-| `tools/` | `check.sh` (validation), `screenshot.gd` (captures d'écran automatiques) |
+| `assets/` | Sons (`audio/sfx`, générés par `tools/generate_sfx.py`) et thème visuel (`theme/neon_theme.tres`) |
+| `tools/` | `check.sh` (validation), `screenshot.gd` (captures d'écran), `generate_sfx.py` (création des sons) |
 | `docs/` | Game design et architecture |
 
 Explications techniques : [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).

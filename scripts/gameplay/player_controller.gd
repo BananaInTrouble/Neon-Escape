@@ -5,9 +5,6 @@ extends Area2D
 signal hit
 signal lane_changed(lane: int)
 
-const CORE_COLOR := Color(0.91, 0.96, 1.0)
-const GLOW_COLOR := Color(0.0, 0.898, 1.0)
-
 ## Durée de l'animation de changement de voie (secondes).
 @export var move_duration := 0.09
 ## Rayon visuel de l'orbe (la zone de collision est un peu plus petite, par équité).
@@ -18,10 +15,18 @@ var lane: int = Lanes.CENTER
 var controls_enabled := true
 var _area_width := 720.0
 var _tween: Tween
+var _squash: Tween
+var _trail: CPUParticles2D
+
+@onready var visual: Node2D = $Visual
 
 
 func _ready() -> void:
 	area_entered.connect(_on_area_entered)
+	visual.radius = visual_radius
+	_trail = Effects.create_trail()
+	_trail.show_behind_parent = true
+	add_child(_trail)
 
 
 ## Les boutons de l'interface consomment leurs touchers avant d'arriver ici :
@@ -71,16 +76,21 @@ func _animate_to(target_x: float) -> void:
 	_tween = create_tween()
 	_tween.tween_property(self, "position:x", target_x, move_duration) \
 		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	# Petit étirement du dessin seulement : la zone de collision ne change pas.
+	if _squash:
+		_squash.kill()
+	visual.scale = Vector2(1.3, 0.8)
+	_squash = create_tween()
+	_squash.tween_property(visual, "scale", Vector2.ONE, 0.18) \
+		.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+
+
+## Fin de partie : l'orbe disparaît (l'explosion est gérée par la partie).
+func explode() -> void:
+	controls_enabled = false
+	visual.hide()
+	_trail.emitting = false
 
 
 func _on_area_entered(_area: Area2D) -> void:
 	hit.emit()
-
-
-func _draw() -> void:
-	# Halo en anneaux concentriques (léger, sans shader).
-	for i in 4:
-		var t := float(i) / 4.0
-		draw_circle(Vector2.ZERO, visual_radius * (1.9 - t * 0.6), Color(GLOW_COLOR, 0.05 + t * 0.04))
-	draw_circle(Vector2.ZERO, visual_radius, GLOW_COLOR)
-	draw_circle(Vector2.ZERO, visual_radius * 0.5, CORE_COLOR)

@@ -41,6 +41,9 @@ func _run() -> void:
 				for f in test.failures:
 					print("        - " + f)
 	print("\n%d test(s) réussi(s), %d échec(s)." % [passed, failed])
+	# Laisse le moteur audio libérer les sons encore en cours avant de quitter.
+	for i in 30:
+		await process_frame
 	quit(1 if failed > 0 else 0)
 
 
