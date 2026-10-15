@@ -5,13 +5,36 @@ extends Node
 ## Il ne contient aucune règle de gameplay détaillée : il relie les modules
 ## (partie, score, interface) via leurs signaux.
 
+const GAME_SCENE: PackedScene = preload("res://scenes/game/game.tscn")
+
 var state := GameState.new()
+var game: Game
 
 
 func _ready() -> void:
 	# Le gestionnaire doit continuer à tourner quand le gameplay est en pause.
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	state.changed.connect(_on_state_changed)
+	# Provisoire (avant le menu principal) : on lance directement une partie.
+	start_game()
+
+
+## Lance une nouvelle partie propre (détruit la précédente si besoin).
+func start_game() -> bool:
+	if not state.transition_to(GameState.State.PLAYING):
+		return false
+	_clear_game()
+	game = GAME_SCENE.instantiate()
+	game.process_mode = Node.PROCESS_MODE_PAUSABLE
+	add_child(game)
+	return true
+
+
+func _clear_game() -> void:
+	if is_instance_valid(game):
+		remove_child(game)
+		game.queue_free()
+	game = null
 
 
 func _on_state_changed(from: GameState.State, to: GameState.State) -> void:
