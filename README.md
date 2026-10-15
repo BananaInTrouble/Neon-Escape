@@ -9,6 +9,8 @@ Moteur : **Godot 4** (projet créé et testé avec Godot **4.3-stable**, s'ouvre
 - Le record est sauvegardé sur l'appareil et conservé après fermeture du jeu.
 - Style néon : boutons lumineux, décor qui défile, traînée et pulsation de l'orbe, explosion à la collision.
 - Sons (déplacement, point, collision, record, clics), avec un bouton SOUND : ON/OFF mémorisé.
+- Musique au menu et pendant les parties (10 morceaux libres de droits, tirés au hasard), bouton MUSIC : ON/OFF,
+  écran CREDITS.
 - Trois voies, joueur au centre au départ.
 - Toucher la moitié gauche ou droite de l'écran pour changer de voie (sur ordinateur : clic, flèches ← → ou A / D).
 - Des rangées d'obstacles descendent ; chaque rangée laisse toujours au moins une voie libre.
@@ -61,6 +63,16 @@ GODOT=/Applications/Godot.app/Contents/MacOS/Godot ./tools/check.sh
 Ce script importe le projet, exécute tous les tests automatisés, puis lance le jeu sans fenêtre pendant 300 images.
 Il affiche `== Tout est OK` ou la liste des erreurs. Détails et vérifications manuelles : [tests/README.md](tests/README.md).
 
+## Musiques
+
+Les 10 morceaux (dans `assets/audio/music/`) et leurs licences sont listés dans [CREDITS.md](CREDITS.md) et
+`scripts/core/music_tracks.gd`. Pour en ajouter ou en remplacer un :
+
+1. Télécharger le morceau depuis sa page OpenGameArt et le renommer avec son identifiant
+   (ex. `cyber_power.mp3`, `synesthesia.mp3` ; identifiants dans `music_tracks.gd`).
+2. Les convertir (volume harmonisé, format OGG léger) : `./tools/import_music.sh <dossier_des_téléchargements>`
+3. Relancer `./tools/check.sh`. Un morceau absent est simplement ignoré par le jeu.
+
 ## Organisation
 
 | Dossier | Contenu |
@@ -71,7 +83,7 @@ Il affiche `== Tout est OK` ou la liste des erreurs. Détails et vérifications 
 | `scripts/ui/` | Affichage (HUD, Game Over) : aucune règle de jeu |
 | `tests/` | Tests automatisés (`tests/unit/test_*.gd`) et lanceur |
 | `assets/` | Sons (`audio/sfx`, générés par `tools/generate_sfx.py`) et thème visuel (`theme/neon_theme.tres`) |
-| `tools/` | `check.sh` (validation), `screenshot.gd` (captures d'écran), `generate_sfx.py` (création des sons) |
+| `tools/` | `check.sh` (validation), `smoke_run.gd` (lancement de contrôle), `screenshot.gd` (captures d'écran), `generate_sfx.py` (création des sons), `import_music.sh` (conversion des musiques) |
 | `docs/` | Game design et architecture |
 
 Explications techniques : [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).

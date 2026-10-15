@@ -71,12 +71,37 @@ text = "Record : 0"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="SoundButton" type="Button" parent="Center/VBox"]
+[node name="Options" type="HBoxContainer" parent="Center/VBox"]
+layout_mode = 2
+size_flags_horizontal = 4
+mouse_filter = 2
+theme_override_constants/separation = 20
+
+[node name="SoundButton" type="Button" parent="Center/VBox/Options"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(300, 90)
+custom_minimum_size = Vector2(260, 90)
 layout_mode = 2
 size_flags_horizontal = 4
 focus_mode = 0
 theme_type_variation = &"SecondaryButton"
 theme_override_font_sizes/font_size = 32
 text = "SOUND : ON"
+
+[node name="MusicButton" type="Button" parent="Center/VBox/Options"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(260, 90)
+layout_mode = 2
+focus_mode = 0
+theme_type_variation = &"SecondaryButton"
+theme_override_font_sizes/font_size = 32
+text = "MUSIC : ON"
+
+[node name="CreditsButton" type="Button" parent="Center/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(240, 80)
+layout_mode = 2
+size_flags_horizontal = 4
+focus_mode = 0
+theme_type_variation = &"SecondaryButton"
+theme_override_font_sizes/font_size = 28
+text = "CREDITS"

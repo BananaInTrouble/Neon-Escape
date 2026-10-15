@@ -22,6 +22,7 @@ GODOT=godot ./tools/check.sh
 | `test_menus.gd` | Démarrage sur le menu, Play, pause qui fige réellement obstacles et difficulté, demandes de pause invalides refusées, Restart et Main Menu depuis la pause et la fin de partie, toucher sur le bouton Pause sans déplacer le joueur, Échap, pause automatique en arrière-plan, calcul des zones de sécurité |
 | `test_save.gd` | Fichier absent, sauvegarde/relecture, fichier corrompu, valeurs invalides (négatif, texte, énorme, décimal), record conservé après « redémarrage » de la scène principale, écriture seulement en cas de nouveau record, lancement normal malgré une sauvegarde corrompue |
 | `test_art_audio.gd` | Sons joués aux bons moments, son coupé = silence, réglage du son mémorisé après redémarrage, record et réglage qui ne s'écrasent pas, décor qui défile en jeu et s'arrête en pause/fin, étirement de l'orbe sans effet sur la collision, explosion à la collision |
+| `test_music.gd` | Liste des morceaux valide (licences CC0/CC-BY uniquement), aucun fichier = silence sans erreur, musique pendant la partie, en pause avec le jeu, fondu à la fin, morceau différent à chaque partie, réglage MUSIC mémorisé et indépendant du son, crédits complets (avec fichiers OGG de test dans `tests/fixtures/`) |
 | `test_game_flow.gd` | Sur la vraie scène : les obstacles apparaissent et descendent, une collision → une seule fin de partie, score affiché, Retry repart d'une partie propre (difficulté comprise), la difficulté pilote le générateur et s'arrête à la fin |
 
 ## Vérifications manuelles (impossibles à automatiser ici)

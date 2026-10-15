@@ -1,10 +1,11 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://scripts/core/game_manager.gd" id="1_gm"]
 [ext_resource type="PackedScene" path="res://scenes/ui/main_menu.tscn" id="2_menu"]
 [ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="3_hud"]
 [ext_resource type="PackedScene" path="res://scenes/ui/pause_menu.tscn" id="4_pause"]
 [ext_resource type="PackedScene" path="res://scenes/ui/game_over.tscn" id="5_go"]
+[ext_resource type="PackedScene" path="res://scenes/ui/credits_screen.tscn" id="6_credits"]
 
 [node name="Main" type="Node"]
 script = ExtResource("1_gm")
@@ -16,3 +17,5 @@ script = ExtResource("1_gm")
 [node name="PauseMenu" parent="." instance=ExtResource("4_pause")]
 
 [node name="GameOver" parent="." instance=ExtResource("5_go")]
+
+[node name="Credits" parent="." instance=ExtResource("6_credits")]
