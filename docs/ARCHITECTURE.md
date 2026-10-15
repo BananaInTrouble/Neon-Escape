@@ -34,6 +34,7 @@ dépendances circulaires et les chemins de nœuds fragiles.
 | Fichier | Rôle |
 |---|---|
 | `core/game_state.gd` | États `MENU`, `PLAYING`, `PAUSED`, `GAME_OVER` et table des transitions autorisées. Une transition refusée ne change rien : c'est la protection principale contre les doubles fins de partie. |
+| `core/save_manager.gd` | Lit et écrit le record dans `user://save.cfg` (ConfigFile). Valeurs absentes ou invalides → 0 ; écriture via un fichier temporaire puis renommage, pour qu'une coupure ne corrompe pas la sauvegarde. |
 | `core/game_manager.gd` | Lance une partie (nouvelle instance de `game.tscn`), la met en pause, la termine, revient au menu. Affiche le bon écran. Relie les signaux. |
 | `gameplay/lanes.gd` | Géométrie des 3 voies (partagée). |
 | `gameplay/player_controller.gd` | Entrées tactiles et clavier, changement de voie animé, détection de collision. |
@@ -67,6 +68,9 @@ dépendances circulaires et les chemins de nœuds fragiles.
 - **Pause** : `get_tree().paused = true`. La partie (`Game`) est en mode `PAUSABLE` : obstacles, chronomètre de
   difficulté, animations et contrôles du joueur s'arrêtent. Le GameManager et les écrans héritent de son mode
   `ALWAYS` : les menus restent utilisables. Toute sortie de pause (reprise, redémarrage, menu) remet `paused` à faux.
+- **Sauvegarde** : le GameManager charge le record au démarrage et ne l'écrit qu'en fin de partie, en cas de nouveau
+  record. Le chemin du fichier est une propriété (`save_path`) : les tests utilisent `user://test_save.cfg` et ne
+  touchent jamais au vrai record. Le fichier contient un numéro de version pour pouvoir faire évoluer le format.
 - **Libération des obstacles** avec `queue_free()` quand ils sortent de l'écran. Au rythme actuel (≈1 rangée/s), un
   système de recyclage (pool) n'est pas nécessaire ; on pourra l'ajouter si le profilage mobile le justifie.
 

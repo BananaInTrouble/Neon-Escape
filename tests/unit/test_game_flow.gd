@@ -1,20 +1,19 @@
 extends TestCase
 ## Tests d'intégration sur la vraie scène principale.
 
-const MAIN_SCENE := preload("res://scenes/main/main.tscn")
 
 var main: GameManager
 
 
 func before_each() -> void:
-	main = MAIN_SCENE.instantiate()
-	tree.root.add_child(main)
+	main = create_main()
 	main.start_game()
 
 
 func after_each() -> void:
 	tree.paused = false
 	main.queue_free()
+	delete_test_save()
 
 
 func _block_center_on_player() -> void:
