@@ -1,12 +1,16 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://scripts/gameplay/game.gd" id="1_game"]
 [ext_resource type="Script" path="res://scripts/gameplay/lane_background.gd" id="2_bg"]
 [ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="3_player"]
 [ext_resource type="Script" path="res://scripts/gameplay/obstacle_spawner.gd" id="4_spawner"]
+[ext_resource type="Script" path="res://scripts/gameplay/difficulty_manager.gd" id="5_difficulty"]
 
 [node name="Game" type="Node2D"]
 script = ExtResource("1_game")
+
+[node name="DifficultyManager" type="Node" parent="."]
+script = ExtResource("5_difficulty")
 
 [node name="Background" type="Node2D" parent="."]
 script = ExtResource("2_bg")

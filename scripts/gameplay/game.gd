@@ -16,6 +16,7 @@ const PLAYER_BOTTOM_OFFSET := 230.0
 @onready var background: Node2D = $Background
 @onready var player: PlayerController = $Player
 @onready var spawner: ObstacleSpawner = $ObstacleSpawner
+@onready var difficulty: DifficultyManager = $DifficultyManager
 
 var area_size := Vector2(720, 1280)
 var _crashed := false
@@ -29,11 +30,19 @@ func _ready() -> void:
 	spawner.setup(area_size, player.position.y + player.visual_radius)
 	spawner.row_passed.connect(row_passed.emit)
 	player.hit.connect(_on_player_hit)
+	difficulty.start()
+	difficulty.apply_to(spawner)
 	spawner.start()
+
+
+# Game est traité avant ses enfants : les réglages sont à jour avant que les obstacles bougent.
+func _physics_process(_delta: float) -> void:
+	difficulty.apply_to(spawner)
 
 
 ## Fige la partie (obstacles arrêtés, contrôles et collisions désactivés).
 func stop() -> void:
+	difficulty.stop()
 	spawner.stop()
 	player.controls_enabled = false
 	player.set_deferred("monitoring", false)

@@ -81,3 +81,27 @@ func test_retry_button_enabled_after_short_delay() -> void:
 	assert_true(main.game_over_screen.retry_button.disabled, "Bouton bloqué juste après la collision")
 	await tree.create_timer(GameOverScreen.INPUT_DELAY + 0.1).timeout
 	assert_false(main.game_over_screen.retry_button.disabled, "Bouton actif ensuite")
+
+
+func test_difficulty_drives_spawner_and_stops_on_game_over() -> void:
+	var difficulty := main.game.difficulty
+	assert_almost_eq(main.game.spawner.speed, difficulty.start_speed, 1.0, "Vitesse de départ")
+	difficulty.elapsed = 45.0
+	await wait_physics_frames(2)
+	assert_almost_eq(main.game.spawner.speed, difficulty.speed(45.0), 2.0, "Vitesse suit la difficulté")
+	assert_true(main.game.spawner.speed > difficulty.start_speed)
+	_block_center_on_player()
+	await wait_physics_frames(5)
+	var frozen := difficulty.elapsed
+	await wait_physics_frames(10)
+	assert_eq(difficulty.elapsed, frozen, "Le temps de survie s'arrête à la fin de partie")
+
+
+func test_retry_resets_difficulty() -> void:
+	main.game.difficulty.elapsed = 80.0
+	_block_center_on_player()
+	await wait_physics_frames(5)
+	main.game_over_screen.retry_requested.emit()
+	await wait_physics_frames(2)
+	assert_true(main.game.difficulty.elapsed < 0.5, "Nouvelle partie = difficulté de départ")
+	assert_almost_eq(main.game.spawner.speed, main.game.difficulty.start_speed, 1.0)
