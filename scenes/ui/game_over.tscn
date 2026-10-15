@@ -70,6 +70,7 @@ text = "RETRY"
 
 [node name="MainMenuButton" type="Button" parent="Center/VBox"]
 unique_name_in_owner = true
+theme_type_variation = &"SecondaryButton"
 custom_minimum_size = Vector2(380, 110)
 layout_mode = 2
 size_flags_horizontal = 4

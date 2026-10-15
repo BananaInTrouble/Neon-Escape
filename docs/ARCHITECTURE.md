@@ -34,12 +34,15 @@ dépendances circulaires et les chemins de nœuds fragiles.
 | Fichier | Rôle |
 |---|---|
 | `core/game_state.gd` | États `MENU`, `PLAYING`, `PAUSED`, `GAME_OVER` et table des transitions autorisées. Une transition refusée ne change rien : c'est la protection principale contre les doubles fins de partie. |
-| `core/save_manager.gd` | Lit et écrit le record dans `user://save.cfg` (ConfigFile). Valeurs absentes ou invalides → 0 ; écriture via un fichier temporaire puis renommage, pour qu'une coupure ne corrompe pas la sauvegarde. |
+| `core/save_manager.gd` | Lit et écrit le record et le réglage du son dans `user://save.cfg` (ConfigFile) ; toutes les données sont réécrites ensemble pour ne jamais en perdre une. Valeurs absentes ou invalides → 0 ; écriture via un fichier temporaire puis renommage, pour qu'une coupure ne corrompe pas la sauvegarde. |
+| `core/audio_manager.gd` | Joue les effets sonores avec 4 lecteurs réutilisés (pas de création de nœud à chaque son). Coupable via le réglage du son. |
 | `core/game_manager.gd` | Lance une partie (nouvelle instance de `game.tscn`), la met en pause, la termine, revient au menu. Affiche le bon écran. Relie les signaux. |
 | `gameplay/lanes.gd` | Géométrie des 3 voies (partagée). |
 | `gameplay/player_controller.gd` | Entrées tactiles et clavier, changement de voie animé, détection de collision. |
 | `gameplay/obstacle_spawner.gd` | Génère les rangées (toujours franchissables), les fait descendre, libère celles qui sortent. |
 | `gameplay/difficulty_manager.gd` | Calcule vitesse, écart des rangées et proportion de rangées doubles selon le temps de survie, avec limites de sécurité. `Game` applique ces valeurs au générateur à chaque image physique. |
+| `gameplay/orb_visual.gd` | Dessin de l'orbe (halo pulsé), séparé de la logique du joueur pour pouvoir l'animer sans toucher à sa collision. |
+| `gameplay/effects.gd` | Particules : traînée de l'orbe et explosion (autodétruite). Texture ronde partagée, créée une seule fois. |
 | `gameplay/obstacle.gd` | Mouvement d'un bloc et signal de franchissement unique. |
 | `gameplay/score_manager.gd` | Score courant et record ; refuse les points hors partie. |
 | `gameplay/game.gd` | Assemble une partie ; garantit un seul signal `crashed`. |
@@ -71,6 +74,10 @@ dépendances circulaires et les chemins de nœuds fragiles.
 - **Sauvegarde** : le GameManager charge le record au démarrage et ne l'écrit qu'en fin de partie, en cas de nouveau
   record. Le chemin du fichier est une propriété (`save_path`) : les tests utilisent `user://test_save.cfg` et ne
   touchent jamais au vrai record. Le fichier contient un numéro de version pour pouvoir faire évoluer le format.
+- **Thème global** : `assets/theme/neon_theme.tres`, déclaré dans `project.godot` (`gui/theme/custom`). Variantes
+  `SecondaryButton` (rose) et `RoundButton` (bouton Pause). Les scènes n'ont pas à répéter les styles.
+- **Sons** : déclenchés par le GameManager à partir des signaux existants (changement de voie, score, fin de partie,
+  boutons) ; le gameplay ne connaît pas l'audio.
 - **Libération des obstacles** avec `queue_free()` quand ils sortent de l'écran. Au rythme actuel (≈1 rangée/s), un
   système de recyclage (pool) n'est pas nécessaire ; on pourra l'ajouter si le profilage mobile le justifie.
 

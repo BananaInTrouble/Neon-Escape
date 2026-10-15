@@ -16,7 +16,8 @@ Lancer → Play → jouer (sans tutoriel) → éviter les obstacles et marquer d
 | Rangées à 2 voies bloquées | 30 % → 70 % | `difficulty_manager.gd` |
 | Durée de la montée en difficulté | 75 s, puis plafond | `difficulty_manager.gd` → `ramp_duration` |
 | Score | +1 par rangée franchie | `score_manager.gd` |
-| Délai avant que Retry réponde | 0,4 s (évite un relancement accidentel) | `game_over.gd` |
+| Apparition de l'écran de fin | 0,5 s après la collision | `game_manager.gd` → `GAME_OVER_REVEAL_DELAY` |
+| Délai avant que Retry réponde | 0,3 s après l'apparition (évite un relancement accidentel) | `game_over.gd` |
 
 ## Difficulté
 
@@ -37,6 +38,26 @@ Tous les réglages sont dans `scripts/gameplay/difficulty_manager.gd`, et modifi
 - Version web : le record est conservé par le navigateur. Safari peut effacer les données d'un site non visité
   pendant 7 jours ; un jeu ajouté à l'écran d'accueil n'est en principe pas concerné.
 
+## Direction artistique
+
+| Élément | Rendu |
+|---|---|
+| Palette | Fond nuit #080B18, cyan #00E5FF (joueur, actions principales), rose #FF2BD6 (obstacles, actions secondaires), vert #A8FF60 (nouveau record) |
+| Décor | Bandes des voies, séparations en tirets et grille rose très légère qui défilent à la vitesse des obstacles |
+| Orbe | Halo qui pulse, traînée de particules vers le bas, étirement bref en changeant de voie (dessin uniquement, la collision ne change pas) |
+| Collision | Explosion de particules, flash blanc, tremblement de l'écran ; l'écran de fin apparaît 0,5 s après |
+| Interface | Boutons arrondis lumineux (thème `assets/theme/neon_theme.tres`) : cyan = action principale, rose = secondaire ; score qui « saute » à chaque point ; titre qui respire ; NEW RECORD qui clignote |
+| Sons | Déplacement, point, collision, record, clic. Synthétisés par `tools/generate_sfx.py` : aucune ressource externe, aucune licence |
+
+Tout est dessiné par Godot (formes, dégradés, particules) : aucune image externe. Les effets restent légers
+(quelques dizaines de particules, pas de shader) pour les téléphones modestes.
+
+## Réglages
+
+Un seul réglage existe : le son (bouton SOUND : ON/OFF du menu principal), mémorisé avec le record. Un écran
+« Settings » complet n'a pas encore d'intérêt ; il pourra être ajouté si d'autres réglages apparaissent (vibrations,
+musique…).
+
 ## Règles de sécurité (garanties par le code et vérifiées par les tests)
 
 - Une rangée bloque 1 ou 2 voies, **jamais 3**.
@@ -49,11 +70,9 @@ Tous les réglages sont dans `scripts/gameplay/difficulty_manager.gd`, et modifi
 - Un point par **rangée** (même si elle contient 2 blocs), compté quand le haut de la rangée dépasse le bas du joueur.
 - Les déplacements se déclenchent à l'**appui** (plus réactif que le relâchement).
 - Textes des boutons en anglais (Play, Retry…) comme dans le cahier des charges.
-- Pas de bouton Settings pour l'instant : aucun réglage n'existe encore (le son arrivera à l'étape 8).
 - Pause automatique quand l'application passe en arrière-plan, pour ne jamais perdre une partie à cause d'un appel.
 - Le bouton Pause est semi-transparent pour ne pas cacher les obstacles qui apparaissent dans la voie de droite.
 
 ## Prochaines étapes
 
-8. Direction artistique : particules, animations, sons.
 9. Vérification complète et préparation des exports Android / iOS.
