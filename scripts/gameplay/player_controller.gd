@@ -14,12 +14,36 @@ const GLOW_COLOR := Color(0.0, 0.898, 1.0)
 @export var visual_radius := 34.0
 
 var lane: int = Lanes.CENTER
+## Désactivé à la fin de la partie pour ignorer les touchers.
+var controls_enabled := true
 var _area_width := 720.0
 var _tween: Tween
 
 
 func _ready() -> void:
 	area_entered.connect(_on_area_entered)
+
+
+## Les boutons de l'interface consomment leurs touchers avant d'arriver ici :
+## un appui sur Pause ne déplace donc jamais le joueur.
+func _unhandled_input(event: InputEvent) -> void:
+	if not controls_enabled:
+		return
+	var direction := 0
+	if event is InputEventScreenTouch and event.pressed:
+		direction = direction_for_tap(event.position.x, _area_width)
+	elif event.is_action_pressed("move_left"):
+		direction = -1
+	elif event.is_action_pressed("move_right"):
+		direction = 1
+	if direction != 0:
+		move_by(direction)
+		get_viewport().set_input_as_handled()
+
+
+## Moitié gauche de l'écran = -1, moitié droite = +1.
+static func direction_for_tap(x: float, area_width: float) -> int:
+	return -1 if x < area_width * 0.5 else 1
 
 
 ## Place le joueur sur la voie centrale, à la hauteur donnée.
