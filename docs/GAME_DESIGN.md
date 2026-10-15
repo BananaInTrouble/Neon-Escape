@@ -54,9 +54,14 @@ Tout est dessiné par Godot (formes, dégradés, particules) : aucune image exte
 
 ## Musique
 
-- Un morceau tiré au hasard à chaque partie (jamais deux fois de suite), qui boucle tant que la partie dure.
-- Fondu d'entrée au départ, pause avec le jeu, fondu de sortie à la collision ; pas de musique dans les menus.
-- Volume de la musique à -8 dB, sous les effets sonores ; volumes des morceaux harmonisés à la conversion.
+- Menu principal : un morceau tiré au hasard parmi les 10 (volume -12 dB, plus doux). Il continue pendant
+  l'écran des crédits et reprend au retour au menu.
+- Partie : un autre morceau tiré au hasard à chaque lancement, jamais le même que celui qui vient de jouer
+  (menu ou partie précédente). Il boucle tant que la partie dure.
+- Fondu d'entrée au départ, pause avec le jeu, fondu de sortie à la collision.
+- Volume en partie à -8 dB, sous les effets sonores ; volumes des morceaux harmonisés à la conversion.
+- Version web : les navigateurs n'autorisent le son qu'après un premier toucher ; la musique du menu démarre donc
+  au premier contact avec l'écran.
 - Style recherché : électro / synthwave / chiptune entraînant, univers néon (proche de Geometry Dash).
 - Uniquement des licences CC0 ou CC-BY 4.0 : le dépôt est public, les fichiers doivent pouvoir y être redistribués.
 

@@ -164,7 +164,6 @@ func go_to_menu() -> bool:
 		return false
 	_game_over_timer.stop()
 	get_tree().paused = false
-	music.stop()
 	_clear_game()
 	_show_menu()
 	return true
@@ -172,6 +171,7 @@ func go_to_menu() -> bool:
 
 func _show_menu() -> void:
 	main_menu.show_best(score.best)
+	music.play_menu()
 	_show_screens([main_menu])
 
 
@@ -198,6 +198,7 @@ func _on_sound_toggled(enabled: bool) -> void:
 func _on_music_toggled(enabled: bool) -> void:
 	music.set_enabled(enabled)
 	save.save_music_enabled(enabled)
+	music.resume_context(state.current == S.MENU)  # rallume la musique du menu immédiatement
 
 
 func _on_row_passed() -> void:

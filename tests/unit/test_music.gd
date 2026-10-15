@@ -8,10 +8,13 @@ var main: GameManager
 
 
 func before_each() -> void:
-	main = create_main()
-	main.music.set_track_paths(FIXTURES)
+	delete_test_save()
+	main = load(MAIN_SCENE_PATH).instantiate()
+	main.save_path = TEST_SAVE_PATH
+	main.music.set_track_paths(FIXTURES)  # avant l'ajout : la musique du menu démarre dès le lancement
 	main.music.fade_in = 0.05
 	main.music.fade_out = 0.05
+	tree.root.add_child(main)
 
 
 func after_each() -> void:
@@ -46,8 +49,32 @@ func test_no_music_files_is_silent_and_safe() -> void:
 	assert_eq(main.state.current, S.PLAYING)
 
 
+func test_menu_music_at_launch() -> void:
+	await wait_frames(2)
+	assert_true(main.music.is_playing(), "Musique dès le menu principal")
+	assert_true(main.music.in_menu)
+	assert_true(main.music.current_path in FIXTURES)
+
+
+func test_credits_do_not_restart_menu_music() -> void:
+	var track := main.music.current_path
+	main.main_menu.credits_button.pressed.emit()
+	main.credits_screen.back_button.pressed.emit()
+	assert_eq(main.music.current_path, track, "Même morceau après les crédits")
+	assert_true(main.music.is_playing())
+
+
+func test_game_track_differs_from_menu_track() -> void:
+	for i in 10:
+		var menu_track := main.music.current_path
+		main.start_game()
+		assert_true(main.music.current_path != menu_track, "Partie : un autre morceau que le menu")
+		assert_false(main.music.in_menu)
+		main.pause_game()
+		main.go_to_menu()
+
+
 func test_music_plays_during_game_and_pauses_with_it() -> void:
-	assert_false(main.music.is_playing(), "Pas de musique dans le menu")
 	main.start_game()
 	await wait_frames(2)
 	assert_true(main.music.is_playing(), "Musique pendant la partie")
@@ -68,7 +95,9 @@ func test_music_fades_out_on_game_over_and_stops_in_menu() -> void:
 	await wait_frames(2)
 	main.pause_game()
 	main.go_to_menu()
-	assert_false(main.music.is_playing(), "Pas de musique au retour au menu")
+	await wait_frames(2)
+	assert_true(main.music.is_playing(), "Musique du menu au retour au menu")
+	assert_true(main.music.in_menu)
 
 
 func test_next_game_changes_track() -> void:
@@ -83,6 +112,10 @@ func test_music_toggle_and_persistence() -> void:
 	assert_eq(main.main_menu.music_button.text, "MUSIC : ON")
 	main.main_menu.music_button.pressed.emit()
 	assert_eq(main.main_menu.music_button.text, "MUSIC : OFF")
+	assert_false(main.music.is_playing(), "Couper la musique l'arrête au menu")
+	main.main_menu.music_button.pressed.emit()
+	assert_true(main.music.is_playing(), "La rallumer relance la musique du menu")
+	main.main_menu.music_button.pressed.emit()
 	main.start_game()
 	await wait_frames(2)
 	assert_false(main.music.is_playing(), "Musique coupée")

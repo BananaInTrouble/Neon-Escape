@@ -9,7 +9,7 @@ Moteur : **Godot 4** (projet créé et testé avec Godot **4.3-stable**, s'ouvre
 - Le record est sauvegardé sur l'appareil et conservé après fermeture du jeu.
 - Style néon : boutons lumineux, décor qui défile, traînée et pulsation de l'orbe, explosion à la collision.
 - Sons (déplacement, point, collision, record, clics), avec un bouton SOUND : ON/OFF mémorisé.
-- Musique pendant les parties (10 morceaux libres de droits, un différent à chaque partie), bouton MUSIC : ON/OFF,
+- Musique au menu et pendant les parties (10 morceaux libres de droits, tirés au hasard), bouton MUSIC : ON/OFF,
   écran CREDITS. Les fichiers de musique restent à télécharger : voir « Ajouter les musiques » ci-dessous.
 - Trois voies, joueur au centre au départ.
 - Toucher la moitié gauche ou droite de l'écran pour changer de voie (sur ordinateur : clic, flèches ← → ou A / D).
