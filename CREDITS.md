@@ -15,7 +15,7 @@ Morceaux téléchargés sur [OpenGameArt](https://opengameart.org). Licences vé
 | 8-bit Epic Space Shooter Music | HydroGene | CC0 | https://opengameart.org/content/8-bit-epic-space-shooter-music |
 | 8-bit Rush Point | HydroGene | CC0 | https://opengameart.org/content/8-bit-rush-point |
 | Space Synth Wave | Alex McCulloch (Pro Sensory) | CC0 | https://opengameart.org/content/space-synth-wave |
-| Cyber Power | Bogart VGM | CC-BY 4.0 | https://opengameart.org/content/cyber-power |
+| Cyber Power | Bogart VGM ([Facebook](https://www.facebook.com/BogartVGM/)) | CC-BY 4.0 | https://opengameart.org/content/cyber-power |
 | Cybermatic Pulse | Alexandr Zhelanov | CC-BY 4.0 | https://opengameart.org/content/cybermatic-pulse |
 
 - **CC0** : domaine public, aucune obligation. Les auteurs sont tout de même crédités par respect (plusieurs le
@@ -23,8 +23,10 @@ Morceaux téléchargés sur [OpenGameArt](https://opengameart.org). Licences vé
 - **CC-BY 4.0** (https://creativecommons.org/licenses/by/4.0/) : utilisation libre, y compris commerciale, à
   condition de créditer l'auteur, de donner le lien vers la licence et d'indiquer les modifications. Modification
   apportée ici : conversion en OGG et harmonisation du volume.
-- À compléter lors du téléchargement : Bogart VGM demande aussi un lien vers sa page Facebook (adresse indiquée sur
-  la page du morceau).
+- Bogart VGM demande en plus un lien vers sa page Facebook : https://www.facebook.com/BogartVGM/ (affiché dans
+  l'écran CREDITS du jeu).
+- Versions utilisées : version « LOOP » fournie par l'auteur pour Starlight City et Cybermatic Pulse, version complète
+  pour les autres. Licences revérifiées sur chaque page au moment du téléchargement.
 
 ## Effets sonores, graphismes, code
 

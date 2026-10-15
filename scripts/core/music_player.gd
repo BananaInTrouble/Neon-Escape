@@ -36,6 +36,12 @@ func _ready() -> void:
 		_paths = MusicTracks.available_paths()
 
 
+## Fermeture du jeu : on coupe et libère la musique proprement.
+func _exit_tree() -> void:
+	stop()
+	_player.stream = null
+
+
 ## Remplace la liste des morceaux (utilisé par les tests).
 func set_track_paths(paths: PackedStringArray) -> void:
 	_paths = paths

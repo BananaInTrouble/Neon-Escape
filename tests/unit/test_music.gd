@@ -41,6 +41,14 @@ func test_track_list_is_valid() -> void:
 		ids[track["id"]] = true
 
 
+func test_all_ten_tracks_are_in_the_game() -> void:
+	assert_eq(MusicTracks.available_paths().size(), 10, "Les 10 fichiers de musique sont présents")
+	for path in MusicTracks.available_paths():
+		var stream: AudioStream = load(path)
+		assert_true(stream != null and stream.get_length() > 60.0, "Morceau lisible et complet : %s" % path)
+	assert_true("facebook.com/BogartVGM" in CreditsScreen.build_text(), "Lien demandé par Bogart VGM")
+
+
 func test_no_music_files_is_silent_and_safe() -> void:
 	main.music.set_track_paths(PackedStringArray())
 	main.start_game()

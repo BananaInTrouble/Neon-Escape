@@ -16,8 +16,9 @@ echo "== 2/3 Tests automatisés"
 "$GODOT" --headless --script res://tests/run_tests.gd 2>&1 | tee "$LOG"
 if [ "${PIPESTATUS[0]}" -ne 0 ] || grep -qE "SCRIPT ERROR|Parse Error" "$LOG"; then status=1; fi
 
-echo "== 3/3 Lancement du jeu (300 frames, sans écran)"
-"$GODOT" --headless --quit-after 300 >"$LOG" 2>&1
+echo "== 3/3 Lancement du jeu (menu puis partie, ~300 images, sans écran)"
+"$GODOT" --headless --script res://tools/smoke_run.gd >"$LOG" 2>&1
+if ! grep -q "Lancement de contrôle terminé" "$LOG"; then echo "Le lancement ne s'est pas terminé normalement"; status=1; fi
 if grep -E "SCRIPT ERROR|Parse Error|ERROR:" "$LOG"; then status=1; fi
 
 rm -f "$LOG"

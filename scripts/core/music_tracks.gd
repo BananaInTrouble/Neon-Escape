@@ -26,7 +26,8 @@ const TRACKS: Array[Dictionary] = [
 	{"id": "space_synth_wave", "title": "Space Synth Wave", "author": "Alex McCulloch (Pro Sensory)",
 		"license": "CC0", "url": "https://opengameart.org/content/space-synth-wave"},
 	{"id": "cyber_power", "title": "Cyber Power", "author": "Bogart VGM",
-		"license": "CC-BY 4.0", "url": "https://opengameart.org/content/cyber-power"},
+		"license": "CC-BY 4.0", "url": "https://opengameart.org/content/cyber-power",
+		"link": "facebook.com/BogartVGM"},  # lien demandé par l'auteur
 	{"id": "cybermatic_pulse", "title": "Cybermatic Pulse", "author": "Alexandr Zhelanov",
 		"license": "CC-BY 4.0", "url": "https://opengameart.org/content/cybermatic-pulse"},
 ]
@@ -50,5 +51,8 @@ static func available_paths() -> PackedStringArray:
 static func credits_text() -> String:
 	var lines: PackedStringArray = []
 	for track in TRACKS:
-		lines.append("« %s » — %s (%s)" % [track["title"], track["author"], track["license"]])
+		var line := "« %s » — %s (%s)" % [track["title"], track["author"], track["license"]]
+		if track.has("link"):
+			line += "\n   " + String(track["link"])
+		lines.append(line)
 	return "\n".join(lines)
