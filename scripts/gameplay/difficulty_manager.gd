@@ -8,20 +8,20 @@ extends Node
 ## (nœud DifficultyManager de scenes/game/game.tscn) sans toucher au code.
 
 @export_group("Vitesse des obstacles (pixels/seconde)")
-@export var start_speed := 420.0
-@export var max_speed := 900.0
+@export var start_speed := 560.0
+@export var max_speed := 1150.0
 
 @export_group("Temps entre deux rangées (secondes)")
-@export var start_row_interval := 1.25
-@export var min_row_interval := 0.62
+@export var start_row_interval := 0.95
+@export var min_row_interval := 0.52
 
 @export_group("Rangées à deux voies bloquées (probabilité)")
-@export_range(0.0, 1.0) var start_double_chance := 0.15
-@export_range(0.0, 1.0) var max_double_chance := 0.55
+@export_range(0.0, 1.0) var start_double_chance := 0.3
+@export_range(0.0, 1.0) var max_double_chance := 0.7
 
 @export_group("Progression et sécurité")
 ## Durée (secondes) pour passer de la difficulté de départ au maximum.
-@export var ramp_duration := 90.0
+@export var ramp_duration := 75.0
 ## Temps minimal garanti entre deux rangées, quelles que soient les valeurs ci-dessus.
 ## 0,5 s laisse le temps de traverser deux voies (2 touchers + 2 × 0,09 s d'animation).
 @export var safety_min_row_interval := 0.5
